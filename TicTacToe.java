@@ -109,16 +109,14 @@ class Game {
         }
         // Diagonal win
         char is_same1 = board[0][0];
-        if (board[0][0] == is_same1 &&
-            board[1][1] == is_same1 &&
+        if (board[1][1] == is_same1 &&
             board[2][2] == is_same1 &&
             board[3][3] == is_same1) {
                 if (is_same1 == SYMBOL_X) return 10;
                 else return -10;      
             }
-        char is_same2 = board[0][2];
-        if (board[0][3] == is_same2 &&
-            board[1][2] == is_same2 &&
+        char is_same2 = board[0][3];
+        if (board[1][2] == is_same2 &&
             board[2][1] == is_same2 &&
             board[3][0] == is_same2) {
                 if (is_same2 == SYMBOL_X) return 10;
