@@ -5,19 +5,20 @@
 
 import java.util.Scanner;
 
-class Game {
+class TicTacToe {
 
     char[][] board;
     int nsize = 4; // Board size
     private static final char SYMBOL_X = '▒'; // ascii 177
     private static final char SYMBOL_O = '█'; // ascii 219
     private static final int MAX_DEPTH = 12;
-    char turn = SYMBOL_X; // Decides who starts first 
+    char turnPlayer = SYMBOL_X; // Decides who starts first
+    private int turnCount;
 
     /**
      * Class constructor.
      */
-    public Game() {
+    public TicTacToe() {
         createBoard();
         System.out.println("Welcome to the game! Call newGame() to start playing.");
     }
@@ -40,7 +41,7 @@ class Game {
     }
 
     /**
-     * Replace current board with empty nsize x nsize board
+     * Replace current board with empty 4 x 4 board
      */
     public void createBoard() {
         char[][] startBoard = 
@@ -60,7 +61,7 @@ class Game {
     public boolean insert(String posiStr) {
         int posi = ((int) posiStr.charAt(0)) - 96;
         
-        if (posi < 1 || posi > (nsize*nsize)) {
+        if (posi < 1 || posi > (nsize*nsize) || posiStr.length() > 1) {
             System.out.println("\nIllegitimate value");
             return false;
         }
@@ -71,7 +72,7 @@ class Game {
         if (posi > nsize*3) row = 3;
         int index = (posi-1) % (nsize);
         if (this.board[row][index] != SYMBOL_X && this.board[row][index] != SYMBOL_O) {
-            this.board[row][index] = this.turn;
+            this.board[row][index] = this.turnPlayer;
             return true;
         }
         else {
@@ -132,14 +133,7 @@ class Game {
      * @return boolean
      */
     public boolean is_full() {
-        for (int row=0 ; row<nsize ; row++) {
-            for (int col=0 ; col<nsize ; col++) {
-                if (board[row][col] != SYMBOL_X && board[row][col] != SYMBOL_O) {
-                    return false; // If a blank spot is found, it's not over yet
-                }
-            }
-        }
-        return true;
+        return this.turnCount > nsize * nsize;
     }
 
     /**
@@ -199,7 +193,7 @@ class Game {
      */
     public int[] getNextMove() {
         int[] nextMove = new int[]{-1,-1}; // Keeps optimal play
-        int[] viableMove = new int[]{-1,-1}; // Contingent for when nextmove = {-1,-1}. Always keep moves that are legal, though not optimal.
+        int[] viableMove = new int[]{-1,-1}; // Contingency for when nextMove = {-1,-1}. Always keep moves that are legal, though not optimal.
         int bestheu = Integer.MIN_VALUE;
 
         for (int row=0 ; row<nsize ; row++) {
@@ -233,7 +227,8 @@ class Game {
      * Start new game upon calling this function.
      */
     public void newGame() {
-        createBoard();        
+        createBoard();
+        this.turnCount = 1; // New game, start counting turns
         System.out.println("Game Start!");            
         while (true) {
 
@@ -263,8 +258,8 @@ class Game {
                 break;
             }
 
-            // Player X's turn (human)
-            if (this.turn == SYMBOL_X) {
+            // Player's turn
+            if (this.turnPlayer == SYMBOL_X) {
                 while (true) {
                     printBoard();
                     Scanner scan = new Scanner(System.in);
@@ -273,23 +268,18 @@ class Game {
                     boolean act = this.insert(input);
                     if (act) break;
                 }
-                this.turn = SYMBOL_O;
+                this.turnCount++;
+                this.turnPlayer = SYMBOL_O;
+
             }
-            // Player O's turn (Minimax)
+            // Minimax's turn
             else {
                 int[] nextMove = getNextMove();
                 board[nextMove[0]][nextMove[1]] = SYMBOL_O;
-                this.turn = SYMBOL_X;
+                this.turnCount++;
+                this.turnPlayer = SYMBOL_X;
             }
         }
-    }
-}
-
-
-public class TicTacToe {
-    public static void main(String args[]) {
-        Game save1 = new Game();
-        save1.newGame();
     }
 }
 
